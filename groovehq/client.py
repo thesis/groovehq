@@ -1,5 +1,7 @@
 __all__ = ('Groove',)
 
+import re
+
 import requests
 
 class Groove(object):
@@ -11,7 +13,7 @@ class Groove(object):
 
     def _headers(self):
         return {
-            'Authorization': 'Bearer {}'.format(self.api_token),
+            'Authorization': 'Bearer {}'.format(self._api_token),
         }
 
     def list_tickets(self, **kwargs):
@@ -51,3 +53,32 @@ class Groove(object):
                .format(ticket_number))
         resp = self._session.get(url, params=params)
         return resp.json()['messages']
+
+    def create_message(self, ticket_number, author, body, note=True):
+        """
+        Create a new message.
+
+        See https://www.groovehq.com/docs/messages#creating-a-new-message
+        for details.
+
+        :param ticket_number: the ticket this message refers to
+        :param author: the email of the owner of this message
+        :param body: the body of the message
+        :param note: whether this should be a private note, or sent to the
+        customer.
+        """
+        data = {
+            'author': author,
+            'body': body,
+            'note': note
+        }
+        url = ('https://api.groovehq.com/v1/tickets/{}/messages'
+               .format(ticket_number))
+        resp = self._session.post(url, json=data)
+
+        result = resp.json()
+        new_url = ret['message']['href']
+        nums = re.findall(r'\d+', new_url)
+
+        if len(nums) > 0:
+            return nums[-1]
