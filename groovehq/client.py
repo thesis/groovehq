@@ -125,3 +125,33 @@ class Groove(object):
 
         if len(nums) > 0:
             return nums[-1]
+
+    def update_customer(self,
+                        email,
+                        name='',
+                        about='',
+                        twitter_username='',
+                        title='',
+                        company_name='',
+                        phone_number='',
+                        location='',
+                        linkedin_username='',
+                        custom=''):
+        data = {
+            "email": email,
+            "name": name,
+            "about": about,
+            "twitter_username": twitter_username,
+            "title": title,
+            "company_name": company_name,
+            "phone_number": phone_number,
+            "location": location,
+            "linkedin_username": linkedin_username,
+            "custom": {}
+        }
+        resp = self._session.put(
+            f"https://api.groovehq.com/v1/customers/{email}",
+            json=data
+        )
+        result = resp.json()
+        return result["customer"]
