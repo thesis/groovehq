@@ -22,6 +22,15 @@ class Groove(object):
         resp = self._session.get("https://api.groovehq.com/v1/agents")
         return resp.json()["agents"]
 
+    def get_agent(self, email):
+        """
+        Find the agent whose email is *email*.
+
+        :param email: the agent's email.
+        """
+        resp = self._session.get(f"https://api.groovehq.com/v1/agents/{email}")
+        return resp.json()["agent"]
+
     def list_tickets(self, **kwargs):
         """
         Return all tickets matching the criteria.
@@ -126,17 +135,19 @@ class Groove(object):
         if len(nums) > 0:
             return nums[-1]
 
-    def update_customer(self,
-                        email,
-                        name='',
-                        about='',
-                        twitter_username='',
-                        title='',
-                        company_name='',
-                        phone_number='',
-                        location='',
-                        linkedin_username='',
-                        custom=''):
+    def update_customer(
+        self,
+        email,
+        name="",
+        about="",
+        twitter_username="",
+        title="",
+        company_name="",
+        phone_number="",
+        location="",
+        linkedin_username="",
+        custom="",
+    ):
         data = {
             "email": email,
             "name": name,
@@ -147,11 +158,10 @@ class Groove(object):
             "phone_number": phone_number,
             "location": location,
             "linkedin_username": linkedin_username,
-            "custom": {}
+            "custom": {},
         }
         resp = self._session.put(
-            f"https://api.groovehq.com/v1/customers/{email}",
-            json=data
+            f"https://api.groovehq.com/v1/customers/{email}", json=data
         )
         result = resp.json()
         return result["customer"]
