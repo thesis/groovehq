@@ -1,20 +1,26 @@
-__all__ = ('Groove',)
+__all__ = ("Groove",)
 
+import datetime
 import re
 
 import requests
 
-class Groove(object):
 
+class Groove(object):
     def __init__(self, api_token):
         self._api_token = api_token
         self._session = requests.Session()
         self._session.headers = self._headers()
 
     def _headers(self):
-        return {
-            'Authorization': 'Bearer {}'.format(self._api_token),
-        }
+        return {"Authorization": "Bearer {}".format(self._api_token)}
+
+    def list_agents(self):
+        """
+        Return all agents.
+        """
+        resp = self._session.get("https://api.groovehq.com/v1/agents")
+        return resp.json()["agents"]
 
     def list_tickets(self, **kwargs):
         """
@@ -31,28 +37,68 @@ class Groove(object):
         :param folder: the ID of a folder
         """
 
-        params = { k:unicode(v) for k, v in kwargs.items() }
-        resp = self._session.get('https://api.groovehq.com/v1/tickets',
-                                 params=params)
-        return resp.json()['tickets']
+        params = kwargs.items()
+        resp = self._session.get(
+            "https://api.groovehq.com/v1/tickets", params=params
+        )
+        return resp.json()["tickets"]
 
     def get_messages(self, ticket_number, **kwargs):
         """
         Get all messages for a particular ticket.
 
-        See https://www.groovehq.com/docs/messages#listing-all-messages for more
-        details.
+        See https://www.groovehq.com/docs/messages#listing-all-messages for
+        more details.
 
         :param ticket_number: the integer ticket number
         :param page: the page number
         :param per_page: how many results to return per page, defaults to 25
         """
-        params = { k:unicode(v) for k, v in kwargs.items() }
+        params = kwargs.items()
 
-        url = ('https://api.groovehq.com/v1/tickets/{}/messages'
-               .format(ticket_number))
+        url = "https://api.groovehq.com/v1/tickets/{}/messages".format(
+            ticket_number
+        )
         resp = self._session.get(url, params=params)
-        return resp.json()['messages']
+        return resp.json()["messages"]
+
+    def create_ticket(
+        self,
+        body,
+        from_,
+        to,
+        mailbox="",
+        assigned_group="",
+        assignee="",
+        sent_at=None,
+        note=False,
+        send_copy_to_customer=False,
+        state="unread",
+        subject="",
+        tag="",
+    ):
+
+        if sent_at is None:
+            sent_at = datetime.datetime.now()
+
+        data = {
+            "body": body,
+            "from": from_,
+            "to": to,
+            "mailbox": mailbox,
+            "assigned_group": assigned_group,
+            "assignee": assignee,
+            "sent_at": sent_at.strftime("%a, %d %b %Y %H:%M:%S"),
+            "note": note,
+            "send_copy_to_customer": send_copy_to_customer,
+            "state": state,
+            "subject": subject,
+            "tag": tag,
+        }
+        resp = self._session.post(
+            "https://api.groovehq.com/v1/tickets/", json=data
+        )
+        return resp.json()["ticket"]
 
     def create_message(self, ticket_number, author, body, note=True):
         """
@@ -67,18 +113,15 @@ class Groove(object):
         :param note: whether this should be a private note, or sent to the
         customer.
         """
-        data = {
-            'author': author,
-            'body': body,
-            'note': note
-        }
-        url = ('https://api.groovehq.com/v1/tickets/{}/messages'
-               .format(ticket_number))
+        data = {"author": author, "body": body, "note": note}
+        url = "https://api.groovehq.com/v1/tickets/{}/messages".format(
+            ticket_number
+        )
         resp = self._session.post(url, json=data)
 
         result = resp.json()
-        new_url = ret['message']['href']
-        nums = re.findall(r'\d+', new_url)
+        new_url = result["message"]["href"]
+        nums = re.findall(r"\d+", new_url)
 
         if len(nums) > 0:
             return nums[-1]
