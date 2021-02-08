@@ -135,6 +135,24 @@ class Groove(object):
         if len(nums) > 0:
             return nums[-1]
 
+    def get_customer(self, customer_id):
+        """
+        Fetch a customer whose id is *customer_id*.
+
+        *customer_id* can be an actual ID or an email address.
+
+        See https://www.groovehq.com/docs/customers#finding-one-customer
+        for details.
+
+        :param customer_id: the ID / email address of the customer.
+        """
+        url = "https://api.groovehq.com/v1/customers/{}".format(
+            customer_id
+        )
+        resp = self._session.get(url)
+        result = resp.json()
+        return result["customer"]
+
     def update_customer(
         self,
         email,
