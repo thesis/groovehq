@@ -1,3 +1,3 @@
 from .client import Groove
 
-__all__ = ('Groove',)
+__all__ = ("Groove",)
