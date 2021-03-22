@@ -107,6 +107,7 @@ class Groove(object):
         resp = self._session.post(
             "https://api.groovehq.com/v1/tickets/", json=data
         )
+        breakpoint()
         return resp.json()["ticket"]
 
     def create_message(self, ticket_number, author, body, note=True):
@@ -154,59 +155,75 @@ class Groove(object):
     def update_customer(
         self,
         email,
-        name="",
-        about="",
-        twitter_username="",
-        title="",
-        company_name="",
-        phone_number="",
-        location="",
-        linkedin_username="",
-        custom="",
+        name=None,
+        about=None,
+        twitter_username=None,
+        title=None,
+        company_name=None,
+        phone_number=None,
+        location=None,
+        linkedin_username=None,
+        custom=None,
     ):
-        data = {
-            "email": email,
-            "name": name,
-            "about": about,
-            "twitter_username": twitter_username,
-            "title": title,
-            "company_name": company_name,
-            "phone_number": phone_number,
-            "location": location,
-            "linkedin_username": linkedin_username,
-            "custom": {},
-        }
+        data = {"email": email}
+        if name is not None:
+            data["name"] = name
+        if about is not None:
+            data["about"] = about
+        if twitter_username is not None:
+            data["twitter_username"] = twitter_username
+        if title is not None:
+            data["title"] = title
+        if company_name is not None:
+            data["company_name"] = company_name
+        if phone_number is not None:
+            data["phone_number"] = phone_number
+        if location is not None:
+            data["location"] = location
+        if linkedin_username is not None:
+            data["linkedin_username"] = linkedin_username
+        if custom is not None:
+            data["custom"] = {}
+        print(data)
         resp = self._session.put(
             f"https://api.groovehq.com/v1/customers/{email}", json=data
         )
         result = resp.json()
+        print(result)
         return result["customer"]
 
     def create_customer(
         self,
         email,
-        name="",
-        about="",
-        twitter_username="",
-        title="",
-        company_name="",
-        phone_number="",
-        location="",
-        linkedin_username="",
-        custom="",
+        name=None,
+        about=None,
+        twitter_username=None,
+        title=None,
+        company_name=None,
+        phone_number=None,
+        location=None,
+        linkedin_username=None,
+        custom=None,
     ):
-        data = {
-            "email": email,
-            "name": name,
-            "about": about,
-            "twitter_username": twitter_username,
-            "title": title,
-            "company_name": company_name,
-            "phone_number": phone_number,
-            "location": location,
-            "linkedin_username": linkedin_username,
-            "custom": {},
-        }
+        data = {"email": email}
+        if name is not None:
+            data["name"] = name
+        if about is not None:
+            data["about"] = about
+        if twitter_username is not None:
+            data["twitter_username"] = twitter_username
+        if title is not None:
+            data["title"] = title
+        if company_name is not None:
+            data["company_name"] = company_name
+        if phone_number is not None:
+            data["phone_number"] = phone_number
+        if location is not None:
+            data["location"] = location
+        if linkedin_username is not None:
+            data["linkedin_username"] = linkedin_username
+        if custom is not None:
+            data["custom"] = {}
         resp = self._session.post(
             "https://api.groovehq.com/v1/customers/", json=data
         )
