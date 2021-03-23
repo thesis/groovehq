@@ -107,7 +107,6 @@ class Groove(object):
         resp = self._session.post(
             "https://api.groovehq.com/v1/tickets/", json=data
         )
-        breakpoint()
         return resp.json()["ticket"]
 
     def create_message(self, ticket_number, author, body, note=True):
@@ -184,12 +183,10 @@ class Groove(object):
             data["linkedin_username"] = linkedin_username
         if custom is not None:
             data["custom"] = {}
-        print(data)
         resp = self._session.put(
             f"https://api.groovehq.com/v1/customers/{email}", json=data
         )
         result = resp.json()
-        print(result)
         return result["customer"]
 
     def create_customer(
