@@ -109,6 +109,23 @@ class Groove(object):
         )
         return resp.json()["ticket"]
 
+    def update_ticket(self, ticket_number, state):
+        """Update a ticket's state.
+
+        Args:
+            ticket_number (int): The ID of the ticket to update.
+            state (str): The state of the ticket. Can be "unread", "opened",
+                "pending", "closed", or "spam".
+
+        Returns:
+            None
+
+        """
+        self._session.put(
+            f"https://api.groovehq.com/v1/tickets/{ticket_number}/state",
+            json={"state": state},
+        )
+
     def create_message(self, ticket_number, author, body, note=True):
         """
         Create a new message.
